@@ -10,7 +10,7 @@ This is a dependency-free static site. From the repository root, run:
 python3 -m http.server 8000 --bind 0.0.0.0
 ```
 
-Then open `http://localhost:8000` in a browser.
+Then open `http://localhost:8000` in a browser. The future enhancements page is available at `http://localhost:8000/future-enhancements.html`.
 
 ## Deploy on GitHub Pages
 
