@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f4ed" />
+    <meta
+      name="description"
+      content="Play Name, Place, Things, Animal: pick a letter, set a timer, and race to fill all four categories."
+    />
+    <title>NPAT — Name, Place, Things, Animal</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="#top" aria-label="NPAT home">
+          <span class="brand-mark" aria-hidden="true">
+            <span>N</span><span>P</span><span>T</span><span>A</span>
+          </span>
+          <span class="brand-copy">
+            <strong>NPAT</strong>
+            <small>THE QUICK THINKING GAME</small>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Main navigation">
+          <button class="nav-button" id="open-word-bank" type="button">
+            A–Z word bank <span aria-hidden="true">↗</span>
+          </button>
+          <a class="nav-link" href="#how-to-play">How to play</a>
+        </nav>
+      </header>
+
+      <main id="top">
+        <section class="hero" aria-labelledby="page-title">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="eyebrow-dot"></span> FOUR CATEGORIES. ONE LETTER.</p>
+            <h1 id="page-title">Think fast.<br /><span>Write faster.</span></h1>
+            <p class="hero-description">
+              Pick a starting letter, beat the clock, and find a word for every category.
+              Ready when you are.
+            </p>
+          </div>
+          <div class="hero-aside" aria-label="Game summary">
+            <div class="hero-aside-top">
+              <span class="sparkle" aria-hidden="true">✳</span>
+              <span>Quick to learn,<br /><strong>tricky to master.</strong></span>
+            </div>
+            <div class="hero-aside-bottom">
+              <span>NAME</span><i></i><span>PLACE</span><i></i><span>THINGS</span><i></i><span>ANIMAL</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="game-layout" aria-label="Name, Place, Things, Animal game">
+          <section class="setup-panel" aria-labelledby="setup-heading">
+            <div class="panel-topline">
+              <p class="panel-kicker" id="setup-heading">ROUND SETUP</p>
+              <span class="round-state" id="round-state">READY</span>
+            </div>
+
+            <div class="letter-stage">
+              <div class="letter-details">
+                <p class="micro-label">YOUR STARTING LETTER</p>
+                <div class="letter-lockup">
+                  <span class="big-letter" id="big-letter" aria-live="polite">?</span>
+                  <span class="letter-note" id="letter-note">Pick any letter to begin.</span>
+                </div>
+              </div>
+              <button class="shuffle-button" id="pick-random" type="button">
+                <span class="shuffle-icon" aria-hidden="true">⟳</span>
+                <span>Pick for me</span>
+              </button>
+            </div>
+
+            <div class="picker-heading">
+              <span>Or choose your own</span>
+              <span class="picker-hint">A to Z</span>
+            </div>
+            <div class="letter-grid" id="letter-grid" role="group" aria-label="Choose a starting letter"></div>
+
+            <div class="setup-divider"></div>
+
+            <div class="timer-heading">
+              <div>
+                <p class="micro-label">THE COUNTDOWN</p>
+                <h2>Race the clock</h2>
+              </div>
+              <div class="timer-readout" id="timer-readout">
+                <span id="timer-display" role="timer" aria-label="Time remaining" aria-live="off">01:00</span>
+                <small>LEFT</small>
+              </div>
+            </div>
+            <div class="timer-track" aria-hidden="true"><span id="timer-track-fill"></span></div>
+
+            <div class="timer-settings">
+              <label for="duration-select">Round length</label>
+              <div class="duration-controls">
+                <select id="duration-select" aria-label="Choose round length">
+                  <option value="30">30 seconds</option>
+                  <option value="45">45 seconds</option>
+                  <option value="60" selected>60 seconds</option>
+                  <option value="90">90 seconds</option>
+                  <option value="120">2 minutes</option>
+                  <option value="custom">Custom</option>
+                </select>
+                <label class="custom-duration" id="custom-duration-wrap" hidden>
+                  <input id="custom-duration" type="number" min="10" max="600" step="5" value="75" inputmode="numeric" aria-label="Custom timer length in seconds" />
+                  <span>sec</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="timer-actions">
+              <button class="start-button" id="play-toggle" type="button">
+                <span id="play-label">Start round</span>
+                <span class="button-arrow" id="play-icon" aria-hidden="true">→</span>
+              </button>
+              <button class="reset-button" id="reset-round" type="button" aria-label="Reset round" title="Reset round">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8.1 8.1 0 0 0-14.9-4L3 9m0-5v5h5M4 13a8.1 8.1 0 0 0 14.9 4L21 15m0 5v-5h-5" /></svg>
+              </button>
+            </div>
+            <p class="game-status" id="game-status" role="status" aria-live="polite">
+              Pick a letter, or let us choose one for you.
+            </p>
+          </section>
+
+          <section class="answer-panel" aria-labelledby="answers-heading">
+            <div class="answer-header">
+              <div>
+                <p class="light-kicker">YOUR ANSWER SHEET</p>
+                <h2 id="answers-heading">All four, <span id="sheet-letter">your letter?</span></h2>
+              </div>
+              <div class="answer-score" aria-label="Valid answers">
+                <strong id="answer-count">0</strong><span>/ 4</span>
+              </div>
+            </div>
+
+            <div class="answer-progress" aria-hidden="true"><span id="answer-progress-fill"></span></div>
+            <p class="answer-intro" id="answer-intro">Start the timer to unlock your answer sheet.</p>
+
+            <form class="answer-form" id="answer-form" autocomplete="off">
+              <div class="answer-row" data-category="name">
+                <span class="category-icon icon-name" aria-hidden="true">👤</span>
+                <div class="category-copy">
+                  <label for="answer-name">Name</label>
+                  <span>A person's name</span>
+                </div>
+                <div class="answer-input-wrap">
+                  <input id="answer-name" name="name" type="text" placeholder="Type a name…" disabled spellcheck="false" />
+                  <span class="input-feedback" id="feedback-name">Starts with —</span>
+                </div>
+              </div>
+
+              <div class="answer-row" data-category="place">
+                <span class="category-icon icon-place" aria-hidden="true">📍</span>
+                <div class="category-copy">
+                  <label for="answer-place">Place</label>
+                  <span>City, country, or more</span>
+                </div>
+                <div class="answer-input-wrap">
+                  <input id="answer-place" name="place" type="text" placeholder="Type a place…" disabled spellcheck="false" />
+                  <span class="input-feedback" id="feedback-place">Starts with —</span>
+                </div>
+              </div>
+
+              <div class="answer-row" data-category="thing">
+                <span class="category-icon icon-thing" aria-hidden="true">🎒</span>
+                <div class="category-copy">
+                  <label for="answer-thing">Things</label>
+                  <span>An object or item</span>
+                </div>
+                <div class="answer-input-wrap">
+                  <input id="answer-thing" name="thing" type="text" placeholder="Type a thing…" disabled spellcheck="false" />
+                  <span class="input-feedback" id="feedback-thing">Starts with —</span>
+                </div>
+              </div>
+
+              <div class="answer-row" data-category="animal">
+                <span class="category-icon icon-animal" aria-hidden="true">🐾</span>
+                <div class="category-copy">
+                  <label for="answer-animal">Animal</label>
+                  <span>Wild or wonderful</span>
+                </div>
+                <div class="answer-input-wrap">
+                  <input id="answer-animal" name="animal" type="text" placeholder="Type an animal…" disabled spellcheck="false" />
+                  <span class="input-feedback" id="feedback-animal">Starts with —</span>
+                </div>
+              </div>
+            </form>
+
+            <div class="answer-footer">
+              <span class="answer-tip"><span aria-hidden="true">✦</span> Every answer must start with your letter.</span>
+              <button class="ideas-toggle" id="ideas-toggle" type="button" disabled aria-expanded="false" aria-controls="ideas-preview">
+                Need a nudge? <span id="ideas-toggle-letter">See ideas</span><span class="ideas-plus" aria-hidden="true">+</span>
+              </button>
+            </div>
+            <div class="ideas-preview" id="ideas-preview" hidden></div>
+          </section>
+        </section>
+
+        <section class="how-section" id="how-to-play" aria-labelledby="how-heading">
+          <div class="how-heading">
+            <p class="eyebrow"><span class="eyebrow-dot"></span> EASY AS A, B, C</p>
+            <h2 id="how-heading">How to play</h2>
+          </div>
+          <div class="how-steps">
+            <article class="how-step">
+              <span class="step-number">01</span>
+              <h3>Pick a letter</h3>
+              <p>Choose one from A–Z, or let the game pick a surprise letter.</p>
+            </article>
+            <article class="how-step">
+              <span class="step-number">02</span>
+              <h3>Fill the four boxes</h3>
+              <p>Think of a name, place, thing, and animal that all start with it.</p>
+            </article>
+            <article class="how-step">
+              <span class="step-number">03</span>
+              <h3>Beat the timer</h3>
+              <p>Start the clock and enter as many valid answers as you can before time runs out.</p>
+            </article>
+          </div>
+          <p class="house-rule"><span aria-hidden="true">☼</span> House rule: places can be cities, countries, landmarks, or anywhere your group agrees on.</p>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <a class="footer-brand" href="#top">NPAT <span>·</span> Name, Place, Thing, Animal</a>
+        <div class="footer-links">
+          <a href="future-enhancements.html">Future ideas <span aria-hidden="true">↗</span></a>
+          <span>Made for curious minds and quick thinkers.</span>
+        </div>
+      </footer>
+    </div>
+
+    <dialog class="word-bank-dialog" id="word-bank-dialog" aria-labelledby="word-bank-title">
+      <div class="dialog-inner">
+        <div class="dialog-header">
+          <div>
+            <p class="light-kicker">THE A–Z WORD BANK</p>
+            <h2 id="word-bank-title">A little help,<br /><span>by letter.</span></h2>
+            <p class="dialog-description">Tap a letter to browse one sample for every category.</p>
+          </div>
+          <button class="dialog-close" id="close-word-bank" type="button" aria-label="Close word bank">×</button>
+        </div>
+
+        <div class="bank-layout">
+          <div class="bank-picker-column">
+            <div class="bank-letter-card">
+              <span class="micro-label">BROWSING LETTER</span>
+              <strong id="bank-big-letter">A</strong>
+            </div>
+            <div class="bank-letter-grid" id="bank-letter-grid" role="group" aria-label="Browse word ideas by letter"></div>
+          </div>
+
+          <div class="bank-content">
+            <div class="bank-content-heading">
+              <p class="light-kicker">STARTING WITH <strong id="bank-heading-letter">A</strong></p>
+              <p>Sample answers to get you thinking.</p>
+            </div>
+            <div class="bank-samples" id="bank-samples"></div>
+            <button class="use-bank-letter" id="use-bank-letter" type="button">
+              Use <span id="use-bank-letter-label">A</span> for my round <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </div>
+
+        <p class="bank-footnote">These are just starting ideas—your own answers count too. Agree on tricky categories before you play!</p>
+      </div>
+    </dialog>
+  </body>
+</html>
