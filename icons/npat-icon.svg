@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#183b35" />
+  <circle cx="390" cy="125" r="25" fill="#f07a5d" />
+  <text x="256" y="300" fill="#f6d86b" font-family="Arial, Helvetica, sans-serif" font-size="150" font-weight="800" text-anchor="middle">NPAT</text>
+</svg>

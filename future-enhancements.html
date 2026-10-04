@@ -4,14 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f6f4ed" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/npat-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/npat-icon-192.png" />
     <meta
       name="description"
-      content="A look at ideas that could make the Name, Place, Things, Animal game even more fun."
+      content="Explore the custom categories, word ideas, pass-and-play teams, and offline features now available in NPAT."
     />
-    <title>What’s next? — NPAT ideas</title>
+    <title>What’s new? — NPAT features</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="pwa.js" defer></script>
   </head>
   <body>
+    <a class="skip-link" href="#ideas-heading">Skip to the features</a>
     <div class="page-shell">
       <header class="site-header">
         <a class="brand" href="index.html" aria-label="NPAT home">
@@ -24,6 +29,7 @@
           </span>
         </a>
         <nav class="site-nav" aria-label="Main navigation">
+          <button class="nav-button install-button" type="button" data-install-app hidden>Install</button>
           <a class="nav-link back-game-link" href="index.html"><span aria-hidden="true">←</span> Back to the game</a>
         </nav>
       </header>
@@ -34,15 +40,15 @@
             <p class="eyebrow"><span class="eyebrow-dot"></span> THE NPAT IDEA BOARD</p>
             <h1 id="roadmap-title">More ways to play.<br /><span>More room to think.</span></h1>
             <p>
-              NPAT starts with one letter and four categories. Here are a few ideas that could
-              make every round even more fun.
+              NPAT now includes custom rounds, rotating global word ideas, and pass-and-play teams.
+              Everything below is ready to try in this static build.
             </p>
             <a class="roadmap-primary-link" href="index.html">Play a round <span aria-hidden="true">→</span></a>
           </div>
-          <aside class="roadmap-hero-note" aria-label="About this roadmap">
+          <aside class="roadmap-hero-note" aria-label="About group play">
             <span class="roadmap-note-star" aria-hidden="true">✳</span>
-            <p class="roadmap-note-kicker">A WISHLIST, NOT A RELEASE SCHEDULE</p>
-            <p>Good ideas grow from the people playing. These are possibilities to explore—not promises or deadlines.</p>
+            <p class="roadmap-note-kicker">READY TO PLAY</p>
+            <p>Room codes share the round setup. Group answers and scoreboards stay together on the device where you play.</p>
             <div class="roadmap-mini-letters" aria-hidden="true"><span>N</span><span>P</span><span>T</span><span>A</span></div>
           </aside>
         </section>
@@ -50,10 +56,10 @@
         <section class="roadmap-ideas" aria-labelledby="ideas-heading">
           <div class="roadmap-section-heading">
             <div>
-              <p class="eyebrow"><span class="eyebrow-dot"></span> WHAT COULD COME NEXT?</p>
-              <h2 id="ideas-heading">Future enhancements</h2>
+              <p class="eyebrow"><span class="eyebrow-dot"></span> NOW AVAILABLE IN NPAT</p>
+              <h2 id="ideas-heading" tabindex="-1">Features to try</h2>
             </div>
-            <p>Four directions for making the game feel even more yours.</p>
+            <p>Every item from the original idea board is now part of the game. Group play is pass-and-play on one device.</p>
           </div>
 
           <div class="roadmap-grid">
@@ -61,55 +67,59 @@
               <div class="roadmap-card-top">
                 <span class="roadmap-icon" aria-hidden="true">♧</span>
                 <span class="roadmap-tag">PLAY TOGETHER</span>
+                <span class="roadmap-status">AVAILABLE</span>
               </div>
               <h3>Bring your people in</h3>
-              <p>Play the same letter with friends, family, or a classroom—then compare answers when the timer ends.</p>
+              <p>Play in teams on one device, then compare answers and cumulative scores when every turn is done.</p>
               <ul>
-                <li>Quick rooms with a shareable code</li>
-                <li>Team rounds and friendly scoreboards</li>
-                <li>Celebrate answers nobody else thought of</li>
+                <li>Share a round setup with a copyable room code or invite link</li>
+                <li>Pass-and-play turns use the same letter and timer</li>
+                <li>Unique valid answers earn a “Nobody else had it!” bonus</li>
               </ul>
             </article>
 
             <article class="roadmap-card roadmap-card-coral">
               <div class="roadmap-card-top">
                 <span class="roadmap-icon" aria-hidden="true">✎</span>
-                <span class="roadmap-tag">MAKE IT YOURS</span>
+                <span class="roadmap-tag">CUSTOM ROUNDS</span>
+                <span class="roadmap-status">AVAILABLE</span>
               </div>
               <h3>Build your own round</h3>
-              <p>Shape the game around the people playing, from relaxed family nights to fast classroom challenges.</p>
+              <p>Make a round fit your family, classroom, or quick solo break with settings saved on this device.</p>
               <ul>
-                <li>Add, remove, or rename categories</li>
-                <li>Save favorite timer lengths and house rules</li>
-                <li>Choose easy, tricky, or surprise letters</li>
+                <li>Add, remove, or rename up to eight categories</li>
+                <li>Save favorite timer lengths and custom house rules</li>
+                <li>Choose easy, tricky, or surprise random letters</li>
               </ul>
             </article>
 
             <article class="roadmap-card roadmap-card-sun">
               <div class="roadmap-card-top">
                 <span class="roadmap-icon" aria-hidden="true">✦</span>
-                <span class="roadmap-tag">MORE WORD IDEAS</span>
+                <span class="roadmap-tag">GLOBAL WORD BANK</span>
+                <span class="roadmap-status">AVAILABLE</span>
               </div>
               <h3>Grow the word bank</h3>
-              <p>Make those tricky letters less intimidating while leaving plenty of room for players’ own answers.</p>
+              <p>Get rotating prompts across the alphabet, then save favorites and explore names and places by region.</p>
               <ul>
-                <li>Several examples for each category</li>
-                <li>Save useful ideas for later</li>
-                <li>Explore names and places from around the world</li>
+                <li>Extra examples and shuffled suggestions for every letter</li>
+                <li>Star words to keep a personal idea collection</li>
+                <li>Browse regional names and places from six world regions</li>
               </ul>
             </article>
 
             <article class="roadmap-card roadmap-card-lilac">
               <div class="roadmap-card-top">
                 <span class="roadmap-icon" aria-hidden="true">◉</span>
-                <span class="roadmap-tag">PLAY ANYWHERE</span>
+                <span class="roadmap-tag">OFFLINE & ACCESSIBLE</span>
+                <span class="roadmap-status">AVAILABLE</span>
               </div>
               <h3>Make every turn easier</h3>
-              <p>Keep NPAT comfortable and ready to play on more screens, in more settings, and for more people.</p>
+              <p>Install NPAT, play from a cached copy offline, and use clear controls with keyboard and assistive tech.</p>
               <ul>
-                <li>Installable, offline-friendly play</li>
-                <li>More keyboard and screen-reader support</li>
-                <li>Clearer options for solo or group play</li>
+                <li>Installable PWA with an offline app shell</li>
+                <li>Keyboard shortcuts, labeled fields, and timer announcements</li>
+                <li>Easy-to-find solo and pass-and-play modes</li>
               </ul>
             </article>
           </div>
@@ -117,7 +127,7 @@
 
         <section class="roadmap-bottom" aria-label="Return to the game">
           <div>
-            <p class="roadmap-bottom-kicker">UNTIL THEN…</p>
+            <p class="roadmap-bottom-kicker">READY WHEN YOU ARE</p>
             <h2>Pick a letter and make your own fun.</h2>
           </div>
           <a href="index.html">Back to NPAT <span aria-hidden="true">→</span></a>
@@ -126,7 +136,10 @@
 
       <footer class="site-footer">
         <a class="footer-brand" href="index.html">NPAT <span>·</span> Name, Place, Thing, Animal</a>
-        <span>Made for curious minds and quick thinkers.</span>
+        <div class="footer-links">
+          <span>Made for curious minds and quick thinkers.</span>
+          <span class="connection-status" data-connection-status aria-live="polite">Online</span>
+        </div>
       </footer>
     </div>
   </body>
