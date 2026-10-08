@@ -25,8 +25,6 @@ Then open `http://localhost:8000` in a browser. The service worker and install p
 
 ## Deploy on GitHub Pages
 
-This is a static site and needs no build step. Push or merge to `main`, then in GitHub open **Settings → Pages** and choose **Deploy from a branch**, branch **main**, folder **/(root)**.
+This is a static site and needs no build step. GitHub Pages is configured to use **GitHub Actions** and publishes at [clickalex.github.io/NPAT](https://clickalex.github.io/NPAT/). A complete workflow is prepared at the repository root as `deploy-pages.yml`; manually move it to `.github/workflows/deploy-page.yml` (replacing the existing workflow) to validate pull requests and publish the full app shell, including the PWA manifest, service worker, and icons. GitHub only runs workflows stored under `.github/workflows/`.
 
-A GitHub Actions workflow template is included as `deploy-pages.yml`. If you prefer Actions-based deployment, move it to `.github/workflows/deploy-pages.yml`, then set **Settings → Pages → Build and deployment → Source** to **GitHub Actions**. The template deploys automatically on pushes to `main` once it is in that workflow folder.
-
-The site's assets use relative paths, so the app and service worker work at a project URL such as `https://<owner>.github.io/NPAT/` or on a custom domain.
+For branch-based deployment instead, set **Settings → Pages → Build and deployment → Source** to **Deploy from a branch**, then select branch **main** and folder **/(root)**. The site's relative asset paths work at project URLs and custom domains.
