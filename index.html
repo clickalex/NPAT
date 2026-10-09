@@ -4,15 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f6f4ed" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/npat-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/npat-icon-192.png" />
     <meta
       name="description"
-      content="Play Name, Place, Things, Animal: pick a letter, set a timer, and race to fill all four categories."
+      content="Play NPAT solo or pass-and-play: choose a letter, customize your categories, and race the timer."
     />
     <title>NPAT — Name, Place, Things, Animal</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="pwa.js" defer></script>
     <script src="app.js" defer></script>
   </head>
   <body>
+    <a class="skip-link" href="#game">Skip to the game</a>
     <div class="page-shell">
       <header class="site-header">
         <a class="brand" href="#top" aria-label="NPAT home">
@@ -29,6 +35,8 @@
           <button class="nav-button" id="open-word-bank" type="button">
             A–Z word bank <span aria-hidden="true">↗</span>
           </button>
+          <button class="nav-button" id="open-settings" type="button">Settings</button>
+          <button class="nav-button install-button" type="button" data-install-app hidden>Install</button>
           <a class="nav-link" href="#how-to-play">How to play</a>
         </nav>
       </header>
@@ -36,10 +44,10 @@
       <main id="top">
         <section class="hero" aria-labelledby="page-title">
           <div class="hero-copy">
-            <p class="eyebrow"><span class="eyebrow-dot"></span> FOUR CATEGORIES. ONE LETTER.</p>
+            <p class="eyebrow"><span class="eyebrow-dot"></span> ONE LETTER. YOUR CATEGORIES.</p>
             <h1 id="page-title">Think fast.<br /><span>Write faster.</span></h1>
             <p class="hero-description">
-              Pick a starting letter, beat the clock, and find a word for every category.
+              Play solo or pass the device around. Pick a letter, beat the clock, and fill your categories.
               Ready when you are.
             </p>
           </div>
@@ -54,7 +62,7 @@
           </div>
         </section>
 
-        <section class="game-layout" aria-label="Name, Place, Things, Animal game">
+        <section class="game-layout" id="game" tabindex="-1" aria-label="NPAT word game">
           <section class="setup-panel" aria-labelledby="setup-heading">
             <div class="panel-topline">
               <p class="panel-kicker" id="setup-heading">ROUND SETUP</p>
@@ -80,6 +88,23 @@
               <span class="picker-hint">A to Z</span>
             </div>
             <div class="letter-grid" id="letter-grid" role="group" aria-label="Choose a starting letter"></div>
+            <div class="round-choice-row">
+              <label for="letter-mode">Random letter</label>
+              <select id="letter-mode" aria-describedby="letter-mode-help">
+                <option value="surprise">Surprise · any letter</option>
+                <option value="easy">Easy · familiar letters</option>
+                <option value="tricky">Tricky · challenge letters</option>
+              </select>
+            </div>
+            <p class="choice-help" id="letter-mode-help">“Pick for me” follows this difficulty; choose any letter above to override it.</p>
+            <div class="play-mode-row">
+              <label for="game-mode">Playing with</label>
+              <select id="game-mode" aria-describedby="mode-note">
+                <option value="solo">Just me · solo</option>
+                <option value="group">A group · pass-and-play</option>
+              </select>
+            </div>
+            <p class="choice-help" id="mode-note" role="status" aria-live="polite">One timed answer sheet for you.</p>
 
             <div class="setup-divider"></div>
 
@@ -94,6 +119,7 @@
               </div>
             </div>
             <div class="timer-track" aria-hidden="true"><span id="timer-track-fill"></span></div>
+            <span class="sr-only" id="timer-announcement" aria-live="polite" aria-atomic="true"></span>
 
             <div class="timer-settings">
               <label for="duration-select">Round length</label>
@@ -112,6 +138,13 @@
                 </label>
               </div>
             </div>
+            <div class="favorite-duration-wrap">
+              <div class="favorite-duration-head">
+                <span>Saved timers</span>
+                <button class="text-action" id="save-duration" type="button" aria-pressed="false">☆ Save this timer</button>
+              </div>
+              <div class="favorite-duration-list" id="favorite-durations" aria-label="Saved timer lengths"></div>
+            </div>
 
             <div class="timer-actions">
               <button class="start-button" id="play-toggle" type="button">
@@ -125,70 +158,28 @@
             <p class="game-status" id="game-status" role="status" aria-live="polite">
               Pick a letter, or let us choose one for you.
             </p>
+            <p class="house-rule-note" id="house-rule-note" hidden></p>
           </section>
 
           <section class="answer-panel" aria-labelledby="answers-heading">
             <div class="answer-header">
               <div>
                 <p class="light-kicker">YOUR ANSWER SHEET</p>
-                <h2 id="answers-heading">All four, <span id="sheet-letter">your letter?</span></h2>
+                <h2 id="answers-heading">Every category, <span id="sheet-letter">your letter?</span></h2>
+                <p class="turn-indicator" id="turn-indicator" hidden></p>
               </div>
               <div class="answer-score" aria-label="Valid answers">
-                <strong id="answer-count">0</strong><span>/ 4</span>
+                <strong id="answer-count">0</strong><span>/ <span id="answer-total">4</span></span>
               </div>
             </div>
 
-            <div class="answer-progress" aria-hidden="true"><span id="answer-progress-fill"></span></div>
+            <div class="answer-progress" role="progressbar" aria-label="Valid answers" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0">
+              <span id="answer-progress-fill"></span>
+            </div>
             <p class="answer-intro" id="answer-intro">Start the timer to unlock your answer sheet.</p>
 
-            <form class="answer-form" id="answer-form" autocomplete="off">
-              <div class="answer-row" data-category="name">
-                <span class="category-icon icon-name" aria-hidden="true">👤</span>
-                <div class="category-copy">
-                  <label for="answer-name">Name</label>
-                  <span>A person's name</span>
-                </div>
-                <div class="answer-input-wrap">
-                  <input id="answer-name" name="name" type="text" placeholder="Type a name…" disabled spellcheck="false" />
-                  <span class="input-feedback" id="feedback-name">Starts with —</span>
-                </div>
-              </div>
-
-              <div class="answer-row" data-category="place">
-                <span class="category-icon icon-place" aria-hidden="true">📍</span>
-                <div class="category-copy">
-                  <label for="answer-place">Place</label>
-                  <span>City, country, or more</span>
-                </div>
-                <div class="answer-input-wrap">
-                  <input id="answer-place" name="place" type="text" placeholder="Type a place…" disabled spellcheck="false" />
-                  <span class="input-feedback" id="feedback-place">Starts with —</span>
-                </div>
-              </div>
-
-              <div class="answer-row" data-category="thing">
-                <span class="category-icon icon-thing" aria-hidden="true">🎒</span>
-                <div class="category-copy">
-                  <label for="answer-thing">Things</label>
-                  <span>An object or item</span>
-                </div>
-                <div class="answer-input-wrap">
-                  <input id="answer-thing" name="thing" type="text" placeholder="Type a thing…" disabled spellcheck="false" />
-                  <span class="input-feedback" id="feedback-thing">Starts with —</span>
-                </div>
-              </div>
-
-              <div class="answer-row" data-category="animal">
-                <span class="category-icon icon-animal" aria-hidden="true">🐾</span>
-                <div class="category-copy">
-                  <label for="answer-animal">Animal</label>
-                  <span>Wild or wonderful</span>
-                </div>
-                <div class="answer-input-wrap">
-                  <input id="answer-animal" name="animal" type="text" placeholder="Type an animal…" disabled spellcheck="false" />
-                  <span class="input-feedback" id="feedback-animal">Starts with —</span>
-                </div>
-              </div>
+            <form class="answer-form" id="answer-form" autocomplete="off" aria-label="Round answers">
+              <div id="answer-rows"></div>
             </form>
 
             <div class="answer-footer">
@@ -214,8 +205,8 @@
             </article>
             <article class="how-step">
               <span class="step-number">02</span>
-              <h3>Fill the four boxes</h3>
-              <p>Think of a name, place, thing, and animal that all start with it.</p>
+              <h3>Fill your categories</h3>
+              <p>Find an answer for each category, or customize the list in Settings.</p>
             </article>
             <article class="how-step">
               <span class="step-number">03</span>
@@ -223,18 +214,129 @@
               <p>Start the clock and enter as many valid answers as you can before time runs out.</p>
             </article>
           </div>
-          <p class="house-rule"><span aria-hidden="true">☼</span> House rule: places can be cities, countries, landmarks, or anywhere your group agrees on.</p>
+          <p class="house-rule"><span aria-hidden="true">☼</span> House rule: places can be cities, countries, landmarks, or anywhere your group agrees on. Write your own rule in Settings.</p>
+          <p class="keyboard-hint">Keyboard shortcuts: press A–Z to choose a letter, or Space to start or pause when you are not typing.</p>
         </section>
       </main>
 
       <footer class="site-footer">
         <a class="footer-brand" href="#top">NPAT <span>·</span> Name, Place, Thing, Animal</a>
         <div class="footer-links">
-          <a href="future-enhancements.html">Future ideas <span aria-hidden="true">↗</span></a>
+          <a href="future-enhancements.html">What’s new <span aria-hidden="true">↗</span></a>
           <span>Made for curious minds and quick thinkers.</span>
+          <span class="connection-status" data-connection-status aria-live="polite">Online</span>
         </div>
       </footer>
     </div>
+
+    <dialog class="app-dialog" id="settings-dialog" aria-labelledby="settings-title">
+      <div class="dialog-inner">
+        <div class="dialog-header">
+          <div>
+            <p class="light-kicker">MAKE IT YOURS</p>
+            <h2 id="settings-title">Your game,<br /><span>your rules.</span></h2>
+            <p class="dialog-description">Settings and saved ideas stay on this device.</p>
+          </div>
+          <button class="dialog-close" id="close-settings" type="button" aria-label="Close settings">×</button>
+        </div>
+
+        <form id="settings-form" class="settings-content">
+          <div class="settings-grid">
+            <section class="settings-section" aria-labelledby="category-settings-title">
+              <div class="settings-section-heading">
+                <div>
+                  <p class="light-kicker">CUSTOM CATEGORIES</p>
+                  <h3 id="category-settings-title">What counts?</h3>
+                </div>
+                <span class="settings-count" id="category-count" aria-live="polite">4 / 8</span>
+              </div>
+              <p class="settings-help">Rename, add, or remove categories. Keep at least one, with up to eight per round.</p>
+              <div class="editor-list" id="category-editor"></div>
+              <button class="secondary-action" id="add-category" type="button">＋ Add a category</button>
+            </section>
+
+            <section class="settings-section" aria-labelledby="team-settings-title" id="team-settings">
+              <div class="settings-section-heading">
+                <div>
+                  <p class="light-kicker">PASS-AND-PLAY</p>
+                  <h3 id="team-settings-title">Name your teams</h3>
+                </div>
+                <span class="settings-count" id="team-count" aria-live="polite">2 / 6</span>
+              </div>
+              <p class="settings-help">Everyone gets the same letter and timer, one team at a time. Pass this device between turns.</p>
+              <div class="editor-list" id="team-editor"></div>
+              <button class="secondary-action" id="add-team" type="button">＋ Add a team</button>
+            </section>
+
+            <section class="settings-section" aria-labelledby="house-rules-title">
+              <div class="settings-section-heading">
+                <div>
+                  <p class="light-kicker">HOUSE RULES</p>
+                  <h3 id="house-rules-title">Set the ground rules</h3>
+                </div>
+              </div>
+              <label class="settings-help" for="house-rules">Add any local rules or scoring notes for your group.</label>
+              <textarea id="house-rules" maxlength="300" rows="3" placeholder="For example: landmarks count as places."></textarea>
+            </section>
+
+            <section class="settings-section" aria-labelledby="saved-ideas-title">
+              <div class="settings-section-heading">
+                <div>
+                  <p class="light-kicker">YOUR COLLECTION</p>
+                  <h3 id="saved-ideas-title">Saved word ideas</h3>
+                </div>
+                <span class="settings-count" id="saved-ideas-count" aria-live="polite">0</span>
+              </div>
+              <div class="saved-ideas-list" id="saved-ideas-list"></div>
+            </section>
+
+            <section class="settings-section room-section" aria-labelledby="room-settings-title">
+              <div class="settings-section-heading">
+                <div>
+                  <p class="light-kicker">ROOM INVITE</p>
+                  <h3 id="room-settings-title">Share this setup</h3>
+                </div>
+              </div>
+              <p class="settings-help">Share your letter, difficulty, timer, categories, teams, and house rules as a setup code. It opens that setup on another device; live answers are not synced.</p>
+              <div class="room-actions">
+                <button class="secondary-action" id="create-room-code" type="button">Create room code</button>
+                <button class="text-action" id="copy-room-link" type="button" disabled>Copy invite link</button>
+              </div>
+              <label class="sr-only" for="room-code-output">Room code and invite link</label>
+              <textarea id="room-code-output" rows="2" readonly placeholder="Your shareable code will appear here."></textarea>
+              <div class="join-room-row">
+                <label class="sr-only" for="join-room-code">Paste a room code or invite link</label>
+                <input id="join-room-code" type="text" placeholder="Paste a room code or invite link" autocomplete="off" />
+                <button class="secondary-action" id="join-room" type="button">Use code</button>
+              </div>
+              <p class="room-message" id="room-message" role="status" aria-live="polite"></p>
+            </section>
+          </div>
+
+          <div class="dialog-actions">
+            <button class="settings-cancel" id="cancel-settings" type="button">Cancel</button>
+            <button class="save-settings" type="submit">Save settings</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <dialog class="app-dialog scoreboard-dialog" id="scoreboard-dialog" aria-labelledby="scoreboard-title">
+      <div class="dialog-inner">
+        <div class="dialog-header">
+          <div>
+            <p class="light-kicker">PASS-AND-PLAY RESULTS</p>
+            <h2 id="scoreboard-title">The scoreboard<br /><span>is in.</span></h2>
+            <p class="dialog-description" id="scoreboard-subtitle">One point at a time—great thinking, everyone.</p>
+          </div>
+          <button class="dialog-close" id="close-scoreboard" type="button" aria-label="Close scoreboard">×</button>
+        </div>
+        <div class="scoreboard-body" id="scoreboard-body" aria-live="polite"></div>
+        <div class="dialog-actions">
+          <button class="save-settings" id="next-group-round" type="button">Next group round</button>
+        </div>
+      </div>
+    </dialog>
 
     <dialog class="word-bank-dialog" id="word-bank-dialog" aria-labelledby="word-bank-title">
       <div class="dialog-inner">
@@ -242,7 +344,7 @@
           <div>
             <p class="light-kicker">THE A–Z WORD BANK</p>
             <h2 id="word-bank-title">A little help,<br /><span>by letter.</span></h2>
-            <p class="dialog-description">Tap a letter to browse one sample for every category.</p>
+            <p class="dialog-description">Tap a letter for a fresh idea in every category. Examples shuffle each time you browse.</p>
           </div>
           <button class="dialog-close" id="close-word-bank" type="button" aria-label="Close word bank">×</button>
         </div>
@@ -259,8 +361,21 @@
           <div class="bank-content">
             <div class="bank-content-heading">
               <p class="light-kicker">STARTING WITH <strong id="bank-heading-letter">A</strong></p>
-              <p>Sample answers to get you thinking.</p>
+              <p>Fresh examples—browse again for a different set.</p>
             </div>
+            <label class="bank-region-control" for="bank-region">
+              Explore names and places by region
+              <select id="bank-region">
+                <option value="worldwide">Worldwide mix</option>
+                <option value="Asia">Asia</option>
+                <option value="Africa">Africa</option>
+                <option value="Europe">Europe</option>
+                <option value="North America">North America</option>
+                <option value="South America">South America</option>
+                <option value="Oceania">Oceania</option>
+              </select>
+            </label>
+            <p class="region-help" id="region-help">Regional name/place examples appear when there are several; otherwise the worldwide set is used.</p>
             <div class="bank-samples" id="bank-samples"></div>
             <button class="use-bank-letter" id="use-bank-letter" type="button">
               Use <span id="use-bank-letter-label">A</span> for my round <span aria-hidden="true">→</span>

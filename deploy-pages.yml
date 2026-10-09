@@ -1,6 +1,9 @@
 name: Deploy NPAT to GitHub Pages
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
@@ -8,15 +11,51 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: github-pages
+  group: github-pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  validate:
+    name: Validate static app shell
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check JavaScript syntax and manifest
+        run: |
+          node --check app.js
+          node --check pwa.js
+          node --check sw.js
+          python3 -m json.tool manifest.webmanifest > /dev/null
+
+      - name: Verify all offline app-shell files exist
+        run: |
+          for path in \
+            index.html \
+            future-enhancements.html \
+            styles.css \
+            app.js \
+            pwa.js \
+            sw.js \
+            manifest.webmanifest \
+            .nojekyll \
+            icons/npat-icon.svg \
+            icons/npat-icon-192.png \
+            icons/npat-icon-512.png; do
+            test -f "$path"
+          done
+
   deploy:
+    name: Publish to GitHub Pages
+    if: github.event_name != 'pull_request'
+    needs: validate
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -30,8 +69,9 @@ jobs:
 
       - name: Prepare static site
         run: |
-          mkdir _site
-          cp index.html future-enhancements.html styles.css app.js .nojekyll _site/
+          mkdir -p _site/icons
+          cp index.html future-enhancements.html styles.css app.js pwa.js sw.js manifest.webmanifest .nojekyll _site/
+          cp icons/npat-icon.svg icons/npat-icon-192.png icons/npat-icon-512.png _site/icons/
 
       - name: Upload site files
         uses: actions/upload-pages-artifact@v3
